@@ -1,6 +1,7 @@
 import pymysql
 from collections import defaultdict, Counter
 from fingerprint import generate_fingerprints
+from recognition_stats import record_recognition
 
 DB_CONFIG = {
     "host": "localhost",
@@ -106,8 +107,26 @@ def recognize(file_path):
 
     song_name = result[0]
 
-    print(f"🎵 MATCH FOUND: {song_name}")
+    print(f" MATCH FOUND: {song_name}")
     print(f"Confidence score: {best_score}")
+
+    try:
+        listen_stats = record_recognition(
+            source="local",
+            title=song_name,
+            artist="Unknown",
+            score=best_score,
+            local_song_id=best_song,
+        )
+
+        print(f"Times Recognized: {listen_stats['listen_count']}")
+        print(f"Listen Status: {listen_stats['listen_status']}")
+        print(f"First Listened: {listen_stats['first_listened_at']}")
+        print(f"Last Listened: {listen_stats['last_listened_at']}")
+    except Exception as exc:
+        # Keep the existing local recognition working even if statistics
+        # cannot be written at this moment.
+        print(f"Warning: Could not update listen counter: {exc}")
 
 
 import sys

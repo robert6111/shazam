@@ -1,0 +1,6 @@
+.env
+last_acrcloud_response.json
+temp_acrcloud.wav
+temp_hybrid.wav
+__pycache__/
+*.pyc
